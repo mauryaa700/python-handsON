@@ -1,0 +1,50 @@
+import PIL.Image
+#ascii char used to build the o/p text
+
+
+ASCII_CHARS = ["#","$","%","&","*","@","!",".",",","^"]
+
+
+# resize image accord to new width
+def resize_img(image, new_width=100):
+    width, height = image.size
+    ratio = height / width
+    new_height = int(new_width * ratio)
+    resized_image = image.resize((new_width, new_height))
+    return(resized_image)
+
+
+# convert each pixel to gray scale 
+def grayify(image):
+    grayscale_img = image.convert("L")
+    return(grayscale_img)
+
+#convert pixel to string of ASCII char
+def pixels_to_ascii(image):
+    pixels=image.getdata()
+    char = "".join([ASCII_CHARS[pixel//25] for pixel in pixels])
+    return(char)
+
+def main(new_width=100):
+    # attempt to open image from user input
+    path = input("enter valid path name to an image ")
+
+    try:
+        image=PIL.Image.open(path)
+    except:
+        print(path,"its not a valid path name ")    
+
+    new_image_data = pixels_to_ascii(grayify(resize_img(image)))
+
+
+    #format
+    pixel_count = len(new_image_data)
+    ascii_image = "\n".join(new_image_data[i:(i+new_width)] for i in range(0, pixel_count, new_width))
+
+    print(ascii_image)
+
+    # save the result
+
+    with open("ascii_image.txt","w") as f:
+        f.write(ascii_image)
+main()        
